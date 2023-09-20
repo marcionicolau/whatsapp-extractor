@@ -13,7 +13,7 @@ A python script for extracting WhatsApp conversations from the app's SQLite data
 3. Run the main script.
 
 ```shell
-python main.py --config_path=new-config.cfg
+python main.py --msg_db=inputs/db/msgstore.db --output_path=outputs/messages/txt
 ```
 
 ## Retrieving WhatsApp Databases

@@ -1,4 +1,3 @@
-import configparser
 import os.path
 import sqlite3
 from multiprocessing import cpu_count
@@ -14,26 +13,18 @@ from .models.message import Message
 
 class WhatsAppExtractor:
     KeyType = Tuple[str, str | None, int]
+    PathType = str | PathLike[str]
 
-    def __init__(self, config_path: str | PathLike[str]):
-        self._parse_config(config_path)
+    def __init__(self, wa_db: Optional[PathType], msg_db: PathType,
+                 output_path: PathType):
+
+        self.wa_db = wa_db
+        self.use_wa_db = wa_db is not None
+        self.msg_db = msg_db
+        self.txt_path = output_path
+        self.export2txt = output_path is not None
         self._get_contacts()
         self.chats = []
-
-    def _parse_config(self, cfg_path: str | PathLike[str]):
-
-        if not os.path.exists(cfg_path):
-            raise FileNotFoundError(f"File '{cfg_path}' does not found!")
-
-        config = configparser.ConfigParser()
-        try:
-            config.read(cfg_path)
-            self.use_wa_db = config["input"].getboolean("use_wa_db")
-            self.msg_db = config["input"].get("msgstore_path")
-            self.export2txt = config["output"].getboolean("export_txt")
-            self.txt_path = config["output"].get("txt_output_path")
-        except KeyError as ke:
-            print(f"Key {ke} not found in {cfg_path} file.")
 
     def _db_messages_type(self, cur: Cursor):
         """
@@ -46,14 +37,15 @@ class WhatsAppExtractor:
 
         self.older_databases = cur.fetchone() is not None
 
-    def _db_connection(self) -> Connection:
+    def _db_connection(self, contact: bool = False) -> Connection:
         """ create a database connection to the SQLite database
+        :param contact: Choose between contacts and messages database from WhastApp [default: False]
         :return: Connection object or None
         """
         conn = None
 
         try:
-            conn = sqlite3.connect(self.msg_db)
+            conn = sqlite3.connect(self.msg_db if not contact else self.wa_db)
         except Error as e:
             print(e)
 
@@ -64,7 +56,7 @@ class WhatsAppExtractor:
 
     def _contacts_from_db(self) -> Dict[str, Optional[str]]:
         contacts = {}
-        con = self._db_connection()
+        con = self._db_connection(True)
         cur = con.cursor()
         for jid, wa_name, display_name in cur.execute("SELECT jid, wa_name, display_name from wa_contacts"):
             if display_name:
