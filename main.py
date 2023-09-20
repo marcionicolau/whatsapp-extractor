@@ -8,8 +8,8 @@ PathType = str | PathLike[str]
 
 
 def main(wa_db: Optional[PathType] = None,
-        msg_db: PathType = path.join('data', 'db', 'msgstore.db'),
-        output_path: PathType = path.join('outputs', 'chats_txt')):
+         msg_db: PathType = path.join('data', 'db', 'msgstore.db'),
+         output_path: PathType = path.join('outputs', 'chats_txt')):
     """
     Module to export chat messages from WhatsApp decrypted database
     :param output_path: Path to output chat text folder [default: 'outputs/chats_txt']
