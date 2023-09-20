@@ -2,21 +2,18 @@
 
 A python script for extracting WhatsApp conversations from the app's SQLite database and exporting them as HTML or txt files.
 
-![Screenshot](screenshot.png)
-
 ## Features
-* Export WhatsApp chats to a WhatsApp Web like HTML page.
 * Export WhatsApp chats to txt files (one per chat).
 
 ## Usage
 
 1. Prerequisite: The Whatsapp database files must be available (see the following section).
-2. Supply all configuration values in `config.cfg`. Here, the paths to the database files must be given. The `wa.db` 
+2. Supply all configuration values in `new-config.cfg`. Here, the paths to the database files must be given. The `wa.db` 
    database is only needed for adding names of contacts and does not need to be used.
 3. Run the main script.
 
 ```shell
-python3 main.py
+python main.py --config_path=new-config.cfg
 ```
 
 ## Retrieving WhatsApp Databases
